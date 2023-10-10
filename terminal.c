@@ -55,7 +55,6 @@ void terminal(char **argv, char **env)
 			++idx;
 			arg_arr[idx] = strtok(NULL, delim);
 		}
-
 		child = fork();
 
 		if (child == -1)
