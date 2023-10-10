@@ -1,13 +1,11 @@
 #include "hsh.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdbool.h>
 #include <sys/wait.h>
-
-void terminal(char** argv, char** env)
+void terminal(char **argv, char **env)
 {
         char* st = NULL;
         int idx = 0;
@@ -16,9 +14,9 @@ void terminal(char** argv, char** env)
         ssize_t number_of_caracters;
         
 	char* arg_arr[] = {NULL, NULL};
-        char** path_list;
-        char* new_path;
-        char* delim = " ";
+        char **path_list;
+        char *new_path;
+        char *delim = " ";
         pid_t child;
 
 	while (1)
@@ -27,9 +25,7 @@ void terminal(char** argv, char** env)
 		{
 			printf(":) ");
 		}
-
 		number_of_caracters = getline(&st, &n, stdin);
-
 		if (number_of_caracters == -1)
 		{
 			free(st);
@@ -100,26 +96,24 @@ else
                                         idx = 0;
                                         while(path_list[idx] != NULL)
 {
-                                                free(path_list[idx]);
-                                                ++idx;
-                                        }
-                                        free(path_list);
-                                }
-                        }
+	free(path_list[idx]);
+	++idx;
+}
+free(path_list);
+}
+}
 }
 else
 {
-			wait(&status);                                                                                                                
-		}
+			wait(&status);                                                                                                               }
 }
 }
-
-char** parse_paths()
+char **parse_paths()
 {
-	char** paths;
-	char* cp_var;
-	char* var;
-	char* token;
+	char **paths;
+	char *cp_var;
+	char *var;
+	char *token;
 	int number_of_paths = 1;
 	int path_len;
 	int i = 0;
@@ -140,7 +134,7 @@ path_len = strlen(cp_var);
 			number_of_paths++;
 		}
 	}
-	paths = malloc((number_of_paths + 1) * sizeof(char*));
+	paths = malloc((number_of_paths + 1) * sizeof(char *));
 	token = strtok(cp_var, ":");
 	i = 0;
 	while (token)
@@ -150,29 +144,27 @@ path_len = strlen(cp_var);
 		token = strtok(NULL, ":");
 		i++;
 	}
-	return paths;
+	return (paths);
 }
-char* check_path(char** paths, char* cmd)
+char *check_path(char **paths, char *cmd)
 {
 int i = 0;
 bool found = false;
-char* new_path = NULL;
+char *new_path = NULL;
 
-while(paths[i] != NULL)
+while (paths[i] != NULL)
 {
 	new_path = malloc((strlen(paths[i]) + strlen(cmd) + 1) * sizeof(char));
 strcpy(new_path, paths[i]);
 strcat(new_path, "/");
 		strcat(new_path, cmd);
-
 		if (access(new_path, X_OK) == 0)
 		{
 			found = true;
 			break;
-             }
+		}
 		free(new_path);
 		++i;
-        }
-
-	return (found ? new_path : NULL);
+}
+return (found ? new_path : NULL);
 }
