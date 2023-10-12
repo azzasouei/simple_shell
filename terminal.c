@@ -134,6 +134,7 @@ char **parse_paths()
 	}
 	return (paths);
 }
+
 char *check_path(char **paths, char *cmd)
 {
 	int i = 0;
