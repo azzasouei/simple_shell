@@ -22,9 +22,7 @@ void terminal(char **argv, char **env)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-		{
 			printf(":) ");
-		}
 		number_of_caracters = getline(&st, &n, stdin);
 		if (number_of_caracters == -1)
 		{
@@ -36,16 +34,14 @@ void terminal(char **argv, char **env)
 			if (st[idx] == '\n')
 			{
 				st[idx] = 0;
+				++idx;
 			}
-			++idx;
 		}
 		idx = 0;
 		arg_arr[idx] = strtok(st, delim);
 		if (strcmp(arg_arr[idx], "exit") == 0)
-		{
 			custom_exit();
-		}
-		else if (strcmp(arg_arr[idx], "env") == 0)
+		if (strcmp(arg_arr[idx], "env") == 0)
 		{
 			custom_env(env);
 			continue;
@@ -55,9 +51,7 @@ void terminal(char **argv, char **env)
 			++idx;
 			arg_arr[idx] = strtok(NULL, delim);
 		}
-
 		child = fork();
-
 		if (child == -1)
 		{
 			free(st);
@@ -68,30 +62,22 @@ void terminal(char **argv, char **env)
 			if (access(arg_arr[0], X_OK) == 0)
 			{
 				if (execve(arg_arr[0], arg_arr, env) == -1)
-				{
 					printf("%s :No such file or directory\n", argv[0]);
-				}
 			}
 			else
 			{
 				path_list = parse_paths();
 				if (path_list == NULL)
-				{
 					printf("%s :No such file or directory\n", argv[0]);
-				}
 				else
 				{
 					new_path = check_path(path_list, arg_arr[0]);
 					if (new_path == NULL)
-					{
 						printf("%s :No such file or directory\n", argv[0]);
-					}
 					else
 					{
 						if (execve(new_path, arg_arr, env) == -1)
-						{
 							printf("%s :No such file or directory\n", argv[0]);
-						}
 						free(new_path);
 					}
 					idx = 0;
@@ -100,17 +86,15 @@ void terminal(char **argv, char **env)
 						free(path_list[idx]);
 						++idx;
 					}
-
 					free(path_list);
 				}
 			}
 		}
 		else
-		{
 			wait(&status);
-		}
 	}
 }
+
 char **parse_paths()
 {
 	char **paths;
