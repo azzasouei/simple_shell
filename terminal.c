@@ -34,8 +34,9 @@ void terminal(char **argv, char **env)
 			if (st[idx] == '\n')
 			{
 				st[idx] = 0;
-				++idx;
+			
 			}
+			++idx;
 		}
 		idx = 0;
 		arg_arr[idx] = strtok(st, delim);
