@@ -6,6 +6,13 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 
+/**
+*terminal-This function simulates a basic terminal that reads user input,
+*interprets and executes commands, and provides feedback.
+*@argv: A pointer to an array of strings representing command-line arguments.
+*@env: A pointer to an array of strings representing the environment variables.
+*Return: This function does not return a value (void).
+*/
 void terminal(char **argv, char **env)
 {
 	char *st = NULL;
@@ -34,7 +41,6 @@ void terminal(char **argv, char **env)
 			if (st[idx] == '\n')
 			{
 				st[idx] = 0;
-			
 			}
 			++idx;
 		}
@@ -95,7 +101,12 @@ void terminal(char **argv, char **env)
 			wait(&status);
 	}
 }
-
+/**
+ * parse_paths-This function parses the PATH environment variable
+ * and returns an array of directory paths.
+ * Return: A pointer to an array of strings containing directory paths,
+ * or NULL if there was an error in parsing or memory allocation.
+*/
 char **parse_paths()
 {
 	char **paths;
@@ -135,7 +146,14 @@ char **parse_paths()
 	}
 	return (paths);
 }
-
+/**
+ * check_path-This function checks for the existence of a specified
+ * command in the directories listed in the 'paths' array.
+ * @paths: A pointer to an array of strings containing directory paths.
+ *@cmd: A string representing the command to search for in the directories.
+ *Return: pointer to a string containing the full path to the command if found
+ *or NULL if the command is not found in any of the directories.
+*/
 char *check_path(char **paths, char *cmd)
 {
 	int i = 0;
