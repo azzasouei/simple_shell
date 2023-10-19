@@ -44,7 +44,7 @@ void _start(char **env)
 	if (strcmp(arg_arr[idx], "env") == 0)
 	{
 		custom_env(env);
-		continue;
+		/*continue;*/
 	}
 	while (arg_arr[idx])
 	{
