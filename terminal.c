@@ -16,6 +16,7 @@ void _start(char **env)
 {
 	char *st = NULL;
 	int idx = 0;
+	char *arg_arr[] = {NULL, NULL};
 	ssize_t number_of_caracters;
 	char *delim = " ";
 	size_t n = 0;
