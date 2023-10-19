@@ -1,10 +1,4 @@
 #include "hsh.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdbool.h>
-#include <sys/wait.h>
 
 /**
 *terminal-This function simulates a basic terminal that reads user input,
