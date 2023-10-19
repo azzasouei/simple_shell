@@ -10,9 +10,9 @@
  */
 
 /*
-* _start function,
+* tirm1 function,
 */
-void _start(char **env)
+void tirm1(char **env)
 {
 	char *st = NULL;
 	int idx = 0;
@@ -56,7 +56,7 @@ void _start(char **env)
 /*
 * _access function,
 */
-void _access(char **argv, char **env)
+void tirm2(char **argv, char **env)
 {
 	char *arg_arr[] = {NULL, NULL};
 	int idx = 0;
@@ -103,7 +103,7 @@ void terminal(char **argv, char **env)
 
 	while (1)
 	{
-		_start(env);
+		tirm1(env);
 		child = fork();
 		if (child == -1)
 		{
@@ -112,7 +112,7 @@ void terminal(char **argv, char **env)
 		}
 		else if (child == 0)
 		{
-			_access(argv, env);
+			tirm2(argv, env);
 		}
 		else
 			wait(&status);
