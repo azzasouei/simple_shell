@@ -4,7 +4,8 @@
  *terminal-This function simulates a basic terminal that reads user input,
  *interprets and executes commands, and provides feedback.
  *@argv: A pointer to an array of strings representing command-line arguments.
- *@env: A pointer to an array of strings representing the environment variables.
+ *@env: A pointer to an array of strings representing
+ *the environment variables.
  *Return: This function does not return a value (void).
  */
 
@@ -52,7 +53,7 @@ void _start(char **argv, char **env)
 }
 
 /*
-* _start function,
+* _access function,
 */
 void _access(char **argv, char **env)
 {
