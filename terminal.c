@@ -12,7 +12,7 @@
 /*
 * _start function,
 */
-void _start(char **argv, char **env)
+void _start(char **env)
 {
 	char *st = NULL;
 	int idx = 0;
@@ -102,7 +102,7 @@ void terminal(char **argv, char **env)
 
 	while (1)
 	{
-		_start(argv, env);
+		_start(env);
 		child = fork();
 		if (child == -1)
 		{
