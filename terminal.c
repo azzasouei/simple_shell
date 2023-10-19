@@ -4,12 +4,14 @@
  *terminal-This function simulates a basic terminal that reads user input,
  *interprets and executes commands, and provides feedback.
  *@argv: A pointer to an array of strings representing command-line arguments.
- *@env: A pointer to an array of strings representing
- *the environment variables.
+ *@env: A pointer to an array of strings representing the environment variables.
  *Return: This function does not return a value (void).
  */
 
-int start(char **argv, char **env)
+/*
+* _start function,
+*/
+void _start(char **argv, char **env)
 {
 	char *st = NULL;
 	int idx = 0;
@@ -49,7 +51,10 @@ int start(char **argv, char **env)
 	}
 }
 
-int access(char **argv, char **env)
+/*
+* _start function,
+*/
+void _access(char **argv, char **env)
 {
 	char *arg_arr[] = {NULL, NULL};
 	int idx = 0;
@@ -96,7 +101,7 @@ void terminal(char **argv, char **env)
 
 	while (1)
 	{
-		start(**argv, **env);
+		_start(argv, env);
 		child = fork();
 		if (child == -1)
 		{
@@ -105,7 +110,7 @@ void terminal(char **argv, char **env)
 		}
 		else if (child == 0)
 		{
-			access(**argv, **env);
+			_access(argv, env);
 		}
 		else
 			wait(&status);
