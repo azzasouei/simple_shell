@@ -1,57 +1,101 @@
 #include "hsh.h"
 
 /**
-*terminal-This function simulates a basic terminal that reads user input,
-*interprets and executes commands, and provides feedback.
-*@argv: A pointer to an array of strings representing command-line arguments.
-*@env: A pointer to an array of strings representing the environment variables.
-*Return: This function does not return a value (void).
-*/
-void terminal(char **argv, char **env)
+ *terminal-This function simulates a basic terminal that reads user input,
+ *interprets and executes commands, and provides feedback.
+ *@argv: A pointer to an array of strings representing command-line arguments.
+ *@env: A pointer to an array of strings representing the environment variables.
+ *Return: This function does not return a value (void).
+ */
+
+int start(char **argv, char **env)
 {
 	char *st = NULL;
 	int idx = 0;
-	int status = 0;
-	size_t n = 0;
 	ssize_t number_of_caracters;
-	char *arg_arr[] = {NULL, NULL};
-	char **path_list;
-	char *new_path;
 	char *delim = " ";
+	size_t n = 0;
+
+	if (isatty(STDIN_FILENO))
+		printf(":) ");
+	number_of_caracters = getline(&st, &n, stdin);
+	if (number_of_caracters == -1)
+	{
+		free(st);
+		exit(EXIT_FAILURE);
+	}
+	while (st[idx])
+	{
+		if (st[idx] == '\n')
+		{
+			st[idx] = 0;
+		}
+		++idx;
+	}
+	idx = 0;
+	arg_arr[idx] = strtok(st, delim);
+	if (strcmp(arg_arr[idx], "exit") == 0)
+		custom_exit();
+	if (strcmp(arg_arr[idx], "env") == 0)
+	{
+		custom_env(env);
+		continue;
+	}
+	while (arg_arr[idx])
+	{
+		++idx;
+		arg_arr[idx] = strtok(NULL, delim);
+	}
+}
+
+int access(char **argv, char **env)
+{
+	char *arg_arr[] = {NULL, NULL};
+	int idx = 0;
+	char *new_path;
+	char **path_list;
+
+	if (access(arg_arr[0], X_OK) == 0)
+	{
+		if (execve(arg_arr[0], arg_arr, env) == -1)
+			printf("%s :No such file or directory\n", argv[0]);
+	}
+	else
+	{
+		path_list = parse_paths();
+		if (path_list == NULL)
+			printf("%s :No such file or directory\n", argv[0]);
+		else
+		{
+			new_path = check_path(path_list, arg_arr[0]);
+			if (new_path == NULL)
+				printf("%s :No such file or directory\n", argv[0]);
+			else
+			{
+				if (execve(new_path, arg_arr, env) == -1)
+					printf("%s :No such file or directory\n", argv[0]);
+				free(new_path);
+			}
+			idx = 0;
+			while (path_list[idx] != NULL)
+			{
+				free(path_list[idx]);
+				++idx;
+			}
+			free(path_list);
+		}
+	}
+}
+
+void terminal(char **argv, char **env)
+{
+	int status = 0;
+	char *st = NULL;
 	pid_t child;
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			printf(":) ");
-		number_of_caracters = getline(&st, &n, stdin);
-		if (number_of_caracters == -1)
-		{
-			free(st);
-			exit(EXIT_FAILURE);
-		}
-		while (st[idx])
-		{
-			if (st[idx] == '\n')
-			{
-				st[idx] = 0;
-			}
-			++idx;
-		}
-		idx = 0;
-		arg_arr[idx] = strtok(st, delim);
-		if (strcmp(arg_arr[idx], "exit") == 0)
-			custom_exit();
-		if (strcmp(arg_arr[idx], "env") == 0)
-		{
-			custom_env(env);
-			continue;
-		}
-		while (arg_arr[idx])
-		{
-			++idx;
-			arg_arr[idx] = strtok(NULL, delim);
-		}
+		start(**argv, **env);
 		child = fork();
 		if (child == -1)
 		{
@@ -60,47 +104,19 @@ void terminal(char **argv, char **env)
 		}
 		else if (child == 0)
 		{
-			if (access(arg_arr[0], X_OK) == 0)
-			{
-				if (execve(arg_arr[0], arg_arr, env) == -1)
-					printf("%s :No such file or directory\n", argv[0]);
-			}
-			else
-			{
-				path_list = parse_paths();
-				if (path_list == NULL)
-					printf("%s :No such file or directory\n", argv[0]);
-				else
-				{
-					new_path = check_path(path_list, arg_arr[0]);
-					if (new_path == NULL)
-						printf("%s :No such file or directory\n", argv[0]);
-					else
-					{
-						if (execve(new_path, arg_arr, env) == -1)
-							printf("%s :No such file or directory\n", argv[0]);
-						free(new_path);
-					}
-					idx = 0;
-					while (path_list[idx] != NULL)
-					{
-						free(path_list[idx]);
-						++idx;
-					}
-					free(path_list);
-				}
-			}
+			access(**argv, **env);
 		}
 		else
 			wait(&status);
 	}
 }
+
 /**
  * parse_paths-This function parses the PATH environment variable
  * and returns an array of directory paths.
  * Return: A pointer to an array of strings containing directory paths,
  * or NULL if there was an error in parsing or memory allocation.
-*/
+ */
 char **parse_paths()
 {
 	char **paths;
@@ -140,6 +156,7 @@ char **parse_paths()
 	}
 	return (paths);
 }
+
 /**
  * check_path-This function checks for the existence of a specified
  * command in the directories listed in the 'paths' array.
@@ -147,7 +164,7 @@ char **parse_paths()
  *@cmd: A string representing the command to search for in the directories.
  *Return: pointer to a string containing the full path to the command if found
  *or NULL if the command is not found in any of the directories.
-*/
+ */
 char *check_path(char **paths, char *cmd)
 {
 	int i = 0;
