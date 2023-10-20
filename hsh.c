@@ -1,17 +1,17 @@
-#include "hsh.h"
+#include "shell.h"
 
 /**
- * main -a main function
- * Return:always 0 (success)
- * @argc : input value
- * @argv : input value
- * @env : input value
-*/
-int main(int argc, char **argv, char **env)
+ * main - main function
+ * @arc: len argument
+ * @arv: arv argument by user
+ * @envp: envp argument env
+ * Return: 0
+ */
+int main(int arc, char **arv, char **envp)
 {
-	if (argc == 1)
-	{
-		terminal(argv, env);
-	}
-return (0);
+	bool interactive = (arc == 1 && isatty(STDIN_FILENO));
+
+	shell_main(arv, envp, interactive);
+	return (0);
 }
+

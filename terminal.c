@@ -1,167 +1,107 @@
-#include "hsh.h"
+#include "shell.h"
 
 /**
- *terminal-This function simulates a basic terminal that reads user input,
- *interprets and executes commands, and provides feedback.
- *@argv: A pointer to an array of strings representing command-line arguments.
- *@env: A pointer to an array of strings
- *representing the environment variables.
- *Return: This function does not return a value (void).
+ * sig_handler - handler cntrl c
+ * @num: num argument
  */
-void terminal(char **argv, char **env)
+void sig_handler(int num)
 {
-	char *st = NULL;
-	int idx = 0;
+	(void)num;
+	write(STDOUT_FILENO, "\n$ ", length_string("\n$ "));
+}
+
+/**
+ * shell_main - a shell using c
+ * @arv: argument by user
+ * @envp: envirement variable argument
+ * @flg: flag argument for mode
+ */
+void shell_main(char **arv, char **envp, bool flg)
+{
 	size_t n = 0;
-	ssize_t number_of_caracters;
-	char *arg_arr[] = {NULL, NULL};
-	char *delim = " ";
+	ssize_t num_c = 0;
+	char *cmd = NULL, *rgv[MAX_C];
+	int x;
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			printf(":) ");
-		number_of_caracters = getline(&st, &n, stdin);
-		if (number_of_caracters == -1)
-			custom_free(st, EXIT_FAILURE);
-		while (st[idx])
+		if (flg && isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "$ ", length_string("$ "));
+		signal(SIGINT, sig_handler);
+		num_c = getline(&cmd, &n, stdin);
+		if (num_c == -1)
 		{
-			if (st[idx] == '\n')
-			{
-				st[idx] = 0;
-			}
-			++idx;
+			free(cmd);
+			exit(EXIT_SUCCESS);
 		}
-		idx = 0;
-		arg_arr[idx] = strtok(st, delim);
-		if (strcmp(arg_arr[idx], "exit") == 0)
-			custom_exit();
-		if (strcmp(arg_arr[idx], "env") == 0)
-		{
-			custom_env(env);
+		if (cmd[num_c - 1] == '\n')
+			cmd[num_c - 1] = '\0';
+		cmd = remove_space(cmd);
+		if (length_string(cmd) == 0)
 			continue;
-		}
-		while (arg_arr[idx])
+		x = 0;
+		rgv[x] = strtok(cmd, " \n");
+		exit_control(cmd);
+		path_control(rgv, cmd);
+		while (rgv[x])
 		{
-			++idx;
-			arg_arr[idx] = strtok(NULL, delim);
+			x++;
+			rgv[x] = strtok(NULL, " \n");
 		}
-		fork_function(st, argv, arg_arr, env, idx);
+		runcmd(rgv, arv, envp);
 	}
+	free(cmd);
 }
 
 /**
- * fork_function - This function simulates a basic terminal that
- * interprets and executes commands, and provides feedback.
- * @argv: A pointer to an array of strings representing arguments.
- * @env: A pointer to an array of strings representing the environment.
- * @st: A pointer to an array of strings representing arguments.
- * @arg_arr: A pointer to an array of strings representing arguments.
- * @id: A pointer to an array of strings representing arguments.
- * Return: This function does not return a value (void).
+ * runcmd - a function that run command
+ * @rgv: rgv argument
+ * @arv: arv argument
+ * @envp: envp argument
  */
-
-void fork_function(char *st, char **argv, char *arg_arr[], char **env, int id)
+void runcmd(char **rgv, char **arv, char **envp)
 {
-	char **path_list;
-	int status = 0;
-	pid_t child;
+	pid_t mychild;
+	int stat;
 
-	child = fork();
-	if (child == -1)
+	mychild = fork();
+
+	if (mychild == -1)
 	{
-		free(st);
+		perror("Process Error");
 		exit(EXIT_FAILURE);
 	}
-	else if (child == 0)
+	if (mychild == 0)
 	{
-		if (access(arg_arr[0], X_OK) == 0)
+
+		if (execve(rgv[0], rgv, envp) == (-1))
 		{
-			if (execve(arg_arr[0], arg_arr, env) == -1)
-				printf("%s :No such file or directory\n", argv[0]);
+			write(STDOUT_FILENO, arv[0], length_string(arv[0]));
+			write(STDOUT_FILENO, ": No such file or directory",
+			length_string(": No such file or directory"));
+			write(STDOUT_FILENO, "\n", 1);
 		}
-		else
-		{
-			path_list = parse_paths();
-			check_p_l(path_list, id, arg_arr, argv, env);
-		}
+		exit(EXIT_FAILURE);
 	}
 	else
-		wait(&status);
+	{
+		wait(&stat);
+	}
 }
 
 /**
- * parse_paths-This function parses the PATH environment variable
- * and returns an array of directory paths.
- * Return: A pointer to an array of strings containing directory paths,
- * or NULL if there was an error in parsing or memory allocation.
+ * exit_control - function that terminate the prog when
+ * user types "exit".
+ * @cmd: the string to be read.
+ * Return: nothing.
+ *
  */
-char **parse_paths()
+void exit_control(char *cmd)
 {
-	char **paths;
-	char *cp_var;
-	char *var;
-	char *token;
-	int number_of_paths = 1;
-	int path_len;
-	int i = 0;
-
-	var = getenv("PATH");
-	if (!var)
-		return (NULL);
-
-	cp_var = strdup(var);
-
-	if (!cp_var)
-		return (NULL);
-
-	path_len = strlen(cp_var);
-	for (i = 0; i < path_len; ++i)
+	if (compare_string("exit", cmd) == 0)
 	{
-		if (cp_var[i] == ':')
-		{
-			number_of_paths++;
-		}
+		free(cmd);
+		exit(EXIT_SUCCESS);
 	}
-	paths = malloc((number_of_paths + 1) * sizeof(char *));
-	token = strtok(cp_var, ":");
-	i = 0;
-	while (token)
-	{
-		paths[i] = malloc(sizeof(char) * (strlen(token) + 1));
-		strcpy(paths[i], token);
-		token = strtok(NULL, ":");
-		i++;
-	}
-	return (paths);
 }
-/**
- * check_path-This function checks for the existence of a specified
- * command in the directories listed in the 'paths' array.
- * @paths: A pointer to an array of strings containing directory paths.
- *@cmd: A string representing the command to search for in the directories.
- *Return: pointer to a string containing the full path to the command if found
- *or NULL if the command is not found in any of the directories.
- */
-char *check_path(char **paths, char *cmd)
-{
-	int i = 0;
-	bool found = false;
-	char *new_path = NULL;
 
-	while (paths[i] != NULL)
-	{
-		new_path = malloc((strlen(paths[i]) + strlen(cmd) + 1) * sizeof(char));
-		strcpy(new_path, paths[i]);
-		strcat(new_path, "/");
-		strcat(new_path, cmd);
-		if (access(new_path, X_OK) == 0)
-		{
-			found = true;
-			break;
-		}
-		free(new_path);
-		++i;
-	}
-	return (found ? new_path : NULL);
-}
