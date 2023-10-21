@@ -98,9 +98,6 @@ void runcmd(char **rgv, char **arv, char **envp)
  */
 void exit_control(char *cmd)
 {
-	int i;
-	i = compare_string("exit", cmd);
-	printf("%i", i);
 	if (compare_string("exit", cmd) == 0)
 	{
 		free(cmd);
