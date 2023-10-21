@@ -25,7 +25,7 @@ void foundError(denum *n, char **arv, char *cmd);
 /*----------terminal.c----------*/
 void shell_main(char **arv, char **envp, bool flg);
 void runcmd(char **rgv, char **arv, char **envp);
-void exit_control(char *cmd);
+int exit_control(char *cmd);
 
 /*----------string_handle.c----------*/
 int compare_string(char *s1, char *s2);
