@@ -79,9 +79,9 @@ void runcmd(char **rgv, char **arv, char **envp)
 			write(STDOUT_FILENO, arv[0], length_string(arv[0]));
 			write(STDOUT_FILENO, ": No such file or directory",
 			length_string(": No such file or directory"));
-			write(STDOUT_FILENO, "\n", 2);
+			write(STDOUT_FILENO, "\n", 1);
 		}
-		exit(2);
+		exit();
 	}
 	else
 	{
