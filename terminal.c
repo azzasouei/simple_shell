@@ -103,7 +103,6 @@ void exit_control(char *cmd)
 	j = compare_string("exit", cmd);
 	if (i == 0)
 	{
-
 		free(cmd);
 		if (j == 54)
 		{
