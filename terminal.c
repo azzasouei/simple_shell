@@ -69,7 +69,7 @@ void runcmd(char **rgv, char **arv, char **envp)
 	if (mychild == -1)
 	{
 		perror("Process Error");
-		exit(EXIT_FAILURE);
+		exit(2);
 	}
 	if (mychild == 0)
 	{
