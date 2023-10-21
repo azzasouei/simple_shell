@@ -100,13 +100,14 @@ void exit_control(char *cmd)
 {
 	if (compare_string("exit", cmd) == 0)
 	{
-		free(cmd);
-		exit(2);
-	}
-	else
-	{
+		printf("exit 1");
 		free(cmd);
 		exit(EXIT_SUCCESS);
 	}
+	else if(compare_string("exit", cmd) == 54)
+	{
+		printf("exit 2");
+		free(cmd);
+		exit(2);
+	}
 }
-
