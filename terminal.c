@@ -99,6 +99,7 @@ void runcmd(char **rgv, char **arv, char **envp)
 void exit_control(char *cmd)
 {
 	int i, j;
+
 	i = compare_string("exit", cmd);
 	j = compare_string("exit", cmd);
 	if (i == 0)
