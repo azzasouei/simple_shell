@@ -101,7 +101,7 @@ void exit_control(char *cmd)
 	if (compare_string("exit", cmd) == 0)
 	{
 		free(cmd);
-		exit(1);
+		exit();
 	}
 else	
 		exit(2);
