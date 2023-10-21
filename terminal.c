@@ -98,17 +98,20 @@ void runcmd(char **rgv, char **arv, char **envp)
  */
 void exit_control(char *cmd)
 {
-	if (compare_string("exit", cmd) == 0)
+	int i, j;
+	i = compare_string("exit", cmd);
+	j = compare_string("exit", cmd);
+	if (i == 0)
 	{
+
 		free(cmd);
-		exit(EXIT_SUCCESS);
-	}
-	else if (compare_string("exit", cmd) == 54)
-	{
-		free(cmd);
-		exit(2);
-	}
-	else
-	{
+		if (j == 54)
+		{
+			exit(2);
+		}
+		else
+		{
+			exit(EXIT_SUCCESS);
+		}
 	}
 }
