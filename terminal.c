@@ -103,9 +103,4 @@ void exit_control(char *cmd)
 		free(cmd);
 		exit(2);
 	}
-	else if(compare_string("exit", cmd) == 54)
-	{
-		free(cmd);
-		exit(2);
-	}
 }
