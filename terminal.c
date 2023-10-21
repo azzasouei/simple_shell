@@ -96,13 +96,19 @@ void runcmd(char **rgv, char **arv, char **envp)
  * Return: nothing.
  *
  */
-void exit_control(char *cmd)
+int exit_control(char *cmd)
 {
+	int i;
 	if (compare_string("exit", cmd) == 0)
 	{
-		free(cmd);
-		exit(0);
+		i = EXIT_SUCCESS;
+		return(i);
 	}
-else	
-		exit(2);
+	else 
+	{
+		i = 2;
+		return(i);
+	}
+	free(cmd);
+	exit(i);
 }
